@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="leaflet/leaflet.css">
+  <link rel="stylesheet" href="leaflet-overpass-layer/dist/OverPassLayer.css">
+<!-- <link rel="stylesheet" href="Control.Coordinates.css"> -->
+
+   <script src="leaflet/leaflet.js"></script>
+   <script src="leaflet-overpass-layer/dist/OverPassLayer.bundle.js"></script>
+   <!-- <script src="Control.Coordinates.js"></script> -->
+
+</head>
+<body>
+
+<div id="map" style="width:1600px; height: 800px;"></div>
+
+<p id="p"></p>
+<p id="q"></p>
+<p id="r"></p>
+<!-- <p>IsLeftOf: <span id="result"></span></p> -->
+
+<script type="text/javascript">
+var nopl;
+
+var mymap = L.map('map').setView([48.205, 16.377], 13);
+
+var attr_mapbox = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+var attr_overpass = 'POI via <a href="http://www.overpass-api.de/">Overpass API</a>';
+
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: [attr_mapbox, attr_overpass].join(', '),
+    // maxZoom: 20,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoidG9wbWFua2wiLCJhIjoiY2pybGI2Z2g3MDZzZTN5cDlwd3o0bXFybSJ9.z-Ank7dRAGjNuANuIOh6cQ'
+}).addTo(mymap);
+
+var icoStn = L.icon({
+    iconUrl: 'station.png',
+    iconSize: [24, 24],
+    popupAnchor: [0, -16]
+});
+
+var opl = new L.OverPassLayer({
+  'markerIcon': icoStn,
+  'minZoom': 12,
+  'timeout': 30 * 1000,
+  'query': '(node[railway=station]({{bbox}});relation[route=subway]({{bbox}}););out qt;',
+});
+
+
+mymap.addLayer(opl).on('popupopen', stationClick);
+
+// var c = new L.Control.Coordinates();
+// c.addTo(mymap);
+
+function stationClick(e) {
+// if(typeof nopl !== 'undefined'){
+//   //alert(nopl.isPopupOpen());
+//    if(nopl.isPopupOpen()===false){
+//      alert('return');
+//      return;
+//   }}
+
+
+  if(typeof nopl !== 'undefined'){
+    mymap.removeLayer(nopl);
+    }
+
+  var icoPOI = L.icon({
+      iconUrl: 'poi.png',
+      iconSize: [32, 32],
+      popupAnchor: [0, -16]
+  });
+
+//var popup = e.layer.getPopup();
+//alert('click!');
+
+  nopl = new L.OverPassLayer({
+    'markerIcon': icoPOI,
+    'minZoom': 12,
+    'timeout': 30 * 1000,
+    'query': '(node(around:500,'+(e.popup.getLatLng().lat).toFixed(4).toString() + ',' + (e.popup.getLatLng().lng).toFixed(4).toString() +')[internet_access=wlan];relation[route=subway]({{bbox}}););out qt;',
+  });
+
+  mymap.addLayer(nopl);
+};
+
+</script>
+
+</body>
+</html>
