@@ -45,13 +45,11 @@ var opl = new L.OverPassLayer({
   'minZoom': 12,
   'timeout': 30 * 1000,
   'query': '(node[railway=station]({{bbox}});relation[route=subway]({{bbox}}););out qt;',
+  'stationNode': true,
 });
 
 
-mymap.addLayer(opl).on('popupopen', stationClick);
-
-// var c = new L.Control.Coordinates();
-// c.addTo(mymap);
+mymap.addLayer(opl);
 
 function stationClick(e) {
 // if(typeof nopl !== 'undefined'){
@@ -72,14 +70,12 @@ function stationClick(e) {
       popupAnchor: [0, -16]
   });
 
-//var popup = e.layer.getPopup();
-//alert('click!');
-
   nopl = new L.OverPassLayer({
     'markerIcon': icoPOI,
     'minZoom': 12,
     'timeout': 30 * 1000,
-    'query': '(node(around:500,'+(e.popup.getLatLng().lat).toFixed(4).toString() + ',' + (e.popup.getLatLng().lng).toFixed(4).toString() +')[internet_access=wlan];relation[route=subway]({{bbox}}););out qt;',
+    //'query': '(node(around:500,'+(e.popup.getLatLng().lat).toFixed(4).toString() + ',' + (e.popup.getLatLng().lng).toFixed(4).toString() +')[internet_access=wlan];relation[route=subway]({{bbox}}););out qt;',
+    'query': '(node(around:500,'+(e.latlng.lat).toFixed(4).toString() + ',' + (e.latlng.lng).toFixed(4).toString() +')[internet_access=wlan];relation[route=subway]({{bbox}}););out qt;',
   });
 
   mymap.addLayer(nopl);
