@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+  <h3>Subway map of Vienna</h3>
+
+  Line <select class="line">
+    <option value="U1" selected="selected">U1</option>
+    <option value="U2">U2</option>
+    <option value="U3">U3</option>
+    <option value="U4">U4</option>
+    <option value="U6">U6</option>
+  </select>
+
+  <button class="generate">Generate Map</button>
+
+<script type="text/javascript">
+
+var line = document.querySelector(".line");
+var generate = document.querySelector(".generate");
+
+function callService() {
+  fetch("https://cors.io/?http://overpass-api.de/api/sketch-line?operator=Wiener+Linien&style=wuppertal&width=1300&ref=" + line.value)
+  .then(response => response.text())
+  .then(svg => document.body.insertAdjacentHTML("afterend", svg));
+};
+
+generate.addEventListener("click", callService);
+
+</script>
+
+</body>
+</html>
